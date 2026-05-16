@@ -499,7 +499,7 @@ function updateBirthdayCake(flavor) {
     }
 
     // Update active flavor button
-    document.querySelectorAll('.flavor-btn').forEach(btn => {
+    document.querySelectorAll('.filter-pill').forEach(btn => {
         btn.classList.remove('active');
 
         if (btn.textContent.trim() === flavor) {
