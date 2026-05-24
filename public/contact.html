@@ -198,7 +198,8 @@
         We'd love to hear from you.
       </p>
 
-      <form>
+      <!-- BUGFIX: Added onsubmit handler to prevent reload, show a toast success message, and clear fields -->
+      <form onsubmit="event.preventDefault(); showToast('Thanks! We\'ll get back to you soon 🍫'); this.reset();">
 
         <input
           type="text"
