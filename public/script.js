@@ -96,35 +96,35 @@ const BROWNIE_BLISS_BAKERY = {
     img: 'https://theobroma.in/cdn/shop/files/OverloadBrownie_400x400.jpg?v=1711183338'
 };
 
-let favourites = { bakeries: [], dishes: [] };
+let favouriteItems = { bakeries: [], dishes: [] };
 try {
-  favourites = JSON.parse(localStorage.getItem(FAVOURITES_KEY)) || { bakeries: [], dishes: [] };
-  if (!favourites.bakeries) favourites.bakeries = [];
-  if (!favourites.dishes) favourites.dishes = [];
+  favouriteItems = JSON.parse(localStorage.getItem(FAVOURITES_KEY)) || { bakeries: [], dishes: [] };
+  if (!favouriteItems.bakeries) favouriteItems.bakeries = [];
+  if (!favouriteItems.dishes) favouriteItems.dishes = [];
 } catch (e) {
   console.error('Error parsing favourites from localStorage:', e);
 }
 
 function saveFavourites() {
   try {
-    localStorage.setItem(FAVOURITES_KEY, JSON.stringify(favourites));
+    localStorage.setItem(FAVOURITES_KEY, JSON.stringify(favouriteItems));
   } catch (e) {
     console.error('Error saving favourites to localStorage:', e);
   }
 }
 
 function isFavourite(type, id) {
-  return favourites[type]?.some(item => item.id === id) || false;
+  return favouriteItems[type]?.some(item => item.id === id) || false;
 }
 
 function toggleFavourite(type, item) {
-  if (!favourites[type]) favourites[type] = [];
-  const idx = favourites[type].findIndex(f => f.id === item.id);
+  if (!favouriteItems[type]) favouriteItems[type] = [];
+  const idx = favouriteItems[type].findIndex(f => f.id === item.id);
   if (idx >= 0) {
-    favourites[type].splice(idx, 1);
+    favouriteItems[type].splice(idx, 1);
     showToast('Removed from favourites 💔');
   } else {
-    favourites[type].push(item);
+    favouriteItems[type].push(item);
     showToast('Added to favourites ❤️');
   }
   saveFavourites();
@@ -143,7 +143,7 @@ function updateFavouriteButtons(type, id) {
 }
 
 function updateFavouritesCount() {
-  const total = (favourites.bakeries?.length || 0) + (favourites.dishes?.length || 0);
+  const total = (favouriteItems.bakeries?.length || 0) + (favouriteItems.dishes?.length || 0);
   document.querySelectorAll('.fav-count, [data-favourites-count]').forEach(el => {
     el.textContent = total;
     el.style.display = total ? 'inline-block' : 'none';
@@ -164,7 +164,7 @@ function renderFavouritesPage() {
   if (!bakeryGrid && !dishesGrid) return;
 
   if (bakeryGrid) {
-    bakeryGrid.innerHTML = favourites.bakeries.map(bakery => `
+    bakeryGrid.innerHTML = favouriteItems.bakeries.map(bakery => `
       <article class="favourite-bakery-card">
         <img src="${bakery.img}" alt="${bakery.name}">
         <div class="favourite-bakery-info">
@@ -181,7 +181,7 @@ function renderFavouritesPage() {
   }
 
   if (dishesGrid) {
-    dishesGrid.innerHTML = favourites.dishes.map(dish => `
+    dishesGrid.innerHTML = favouriteItems.dishes.map(dish => `
       <div class="product-card">
         <div class="product-img-wrap">
           <img src="${dish.img || 'https://via.placeholder.com/300'}" alt="${dish.name}">
@@ -1327,6 +1327,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateFavouritesCount();
   renderFavouritesPage();
   updateFavouriteButtons('bakeries', BROWNIE_BLISS_BAKERY.id);
+  initStarRatings();
 
   // Track Order auto-fill if on track.html
   const urlParams = new URLSearchParams(window.location.search);
@@ -1358,6 +1359,13 @@ function scrollToTop() {
   });
 }
 
+function toggleMenu() {
+  const menu = document.getElementById('mobileMenu');
+  if (menu) {
+    menu.classList.toggle('show');
+  }
+}
+
 // --- GLOBAL BINDINGS ---
 window.openCart = openCart;
 window.closeCart = closeCart;
@@ -1385,3 +1393,58 @@ window.toggleBirthdayFavourite = toggleBirthdayFavourite;
 window.scrollToTop = scrollToTop;
 window.trackOrder = trackOrder;
 window.showToast = showToast;
+window.updateBirthdayCake = updateBirthdayCake;
+window.setCakeWeight = setCakeWeight;
+window.toggleMenu = toggleMenu;
+
+function initStarRatings() {
+  document.querySelectorAll('.star-rating').forEach(container => {
+    const stars = container.querySelectorAll('span');
+    const inactiveColor = container.getAttribute('data-inactive-color') || '#ccc';
+    
+    // Set explicit colors initially based on current rating attribute
+    const initialRating = parseInt(container.getAttribute('data-rating') || '4', 10);
+    stars.forEach((star, index) => {
+      star.style.color = index < initialRating ? 'var(--gold)' : inactiveColor;
+    });
+
+    stars.forEach((star, index) => {
+      // Hover effect
+      star.addEventListener('mouseover', () => {
+        stars.forEach((s, idx) => {
+          s.style.color = idx <= index ? 'var(--gold)' : inactiveColor;
+        });
+      });
+      
+      // Mouse out restores current rating
+      star.addEventListener('mouseout', () => {
+        const rating = parseInt(container.getAttribute('data-rating') || '0', 10);
+        stars.forEach((s, idx) => {
+          s.style.color = idx < rating ? 'var(--gold)' : inactiveColor;
+        });
+      });
+
+      // Click to set rating
+      star.addEventListener('click', () => {
+        const val = index + 1;
+        container.setAttribute('data-rating', val);
+        stars.forEach((s, idx) => {
+          s.style.color = idx < val ? 'var(--gold)' : inactiveColor;
+        });
+      });
+    });
+
+    // Reset event handler on parent form (if any)
+    const form = container.closest('form');
+    if (form) {
+      form.addEventListener('reset', () => {
+        setTimeout(() => {
+          container.setAttribute('data-rating', '4');
+          stars.forEach((s, idx) => {
+            s.style.color = idx < 4 ? 'var(--gold)' : inactiveColor;
+          });
+        }, 0);
+      });
+    }
+  });
+}
