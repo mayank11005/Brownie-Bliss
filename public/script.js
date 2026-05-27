@@ -693,54 +693,56 @@ function filterProducts(category = 'all', btn = null) {
 
   grid.innerHTML = filtered
     .map(
-      (p) => `
-     <div class="product-img-wrap">
+    (p) => `
+  <div class="product-card">
 
-   <img src="${product.img}" alt="${product.name}">
+    <div class="product-img-wrap">
 
-   <button
-      class="favorite-btn ${isFavourite('dishes', product.id) ? 'active' : ''}"
-      type="button"
-      data-fav-type="dishes"
-      data-fav-id="${product.id}"
-      aria-label="Toggle favourite"
-      aria-pressed="${isFavourite('dishes', product.id)}"
-      onclick='toggleFavourite("dishes", ${JSON.stringify(product)})'
-   >
-      ${isFavourite('dishes', product.id) ? '&hearts;' : '&#9825;'}
-   </button>
+      <img src="${p.img}" alt="${p.name}">
 
-</div>
+      <button
+        class="favorite-btn ${isFavourite('dishes', p.id) ? 'active' : ''}"
+        type="button"
+        data-fav-type="dishes"
+        data-fav-id="${p.id}"
+        aria-label="Toggle favourite"
+        aria-pressed="${isFavourite('dishes', p.id)}"
+        onclick='toggleFavourite("dishes", ${JSON.stringify(p)})'
+      >
+        ${isFavourite('dishes', p.id) ? '&hearts;' : '&#9825;'}
+      </button>
 
-        <div class="product-info">
+    </div>
 
-          <div class="product-category">
-            ${p.category}
-          </div>
+    <div class="product-info">
 
-          <div class="product-name">
-            ${p.name}
-          </div>
-
-          <div class="product-desc">
-            ${p.description || ''}
-          </div>
-
-          <div class="product-price">
-            ₹${p.price}
-          </div>
-
-          <button
-            class="add-to-cart"
-            onclick='addToCart(${JSON.stringify(p)})'
-          >
-            Add To Cart
-          </button>
-
-        </div>
-
+      <div class="product-category">
+        ${p.category}
       </div>
-    `
+
+      <div class="product-name">
+        ${p.name}
+      </div>
+
+      <div class="product-desc">
+        ${p.description || ''}
+      </div>
+
+      <div class="product-price">
+        ₹${p.price}
+      </div>
+
+      <button
+        class="add-to-cart"
+        onclick='addToCart(${JSON.stringify(p)})'
+      >
+        Add To Cart
+      </button>
+
+    </div>
+
+  </div>
+`
     )
     .join('');
 }
