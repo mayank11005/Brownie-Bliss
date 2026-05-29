@@ -1150,6 +1150,26 @@ function injectCheckoutModal() {
   document.body.appendChild(overlay);
 }
 
+function openReviewModal(){
+  document.getElementById("reviewModal").style.display="flex";
+}
+
+function closeReviewModal(){
+  document.getElementById("reviewModal").style.display="none";
+}
+
+document.getElementById("reviewForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const review = document.getElementById("reviewText").value;
+
+  console.log("Review submitted: ", review);
+
+  showToast("Thank you for your feedback!");
+  this.reset();
+  closeReviewModal();
+});
+
 function openCheckout() {
   if (cart.length === 0) {
     showToast('Your cart is empty! 🍫');
@@ -1613,8 +1633,6 @@ function initStarRatings() {
 
 document.addEventListener('DOMContentLoaded', () => {
   updateFavouritesCount();
-
   renderFavouritesPage();
-
   updateFavouriteButtons('bakeries', BROWNIE_BLISS_BAKERY.id);
 });
