@@ -52,22 +52,31 @@ const DEFAULT_PRODUCTS = [
   },
   {
     id: 2,
-    name: 'Dutch Truffle Delight',
-    category: 'cakes',
-    price: 950,
-    img: 'assets/dutch_truffle.png',
+    name: 'Chocolate Brownie',
+    category: 'brownies',
+    price: 250,
+    img: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c',
     allergens: 'Contains milk, wheat, gluten',
-    shelfLife: 'Best consumed within 3 days',
+    shelfLife: 'Best consumed within 5 days',
   },
   {
     id: 3,
-    name: 'Pineapple Fresh Cream',
-    category: 'cakes',
-    price: 675,
-    img: 'https://theobroma.in/cdn/shop/files/FreshCreamPineappleCakehalfkg_400x400.jpg',
-    allergens: 'Contains milk, wheat, gluten',
-    shelfLife: 'Best consumed within 3 days',
+    name: 'Chocolate Chip Cookie',
+    category: 'cookies',
+    price: 120,
+    img: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e',
+    allergens: 'Contains wheat, butter',
+    shelfLife: 'Best consumed within 7 days',
   },
+  {
+    id: 4,
+    name: 'Tiramisu Dessert',
+    category: 'desserts',
+    price: 350,
+    img: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9',
+    allergens: 'Contains milk, eggs',
+    shelfLife: 'Best consumed within 2 days',
+  }
 ];
 
 const DEFAULT_BDAY_CAKES = {
@@ -282,35 +291,7 @@ function renderFavouritesPage() {
         .join('') || '<p>No favourite dishes yet.</p>';
   }
 }
-function buildCatalogFromList(list) {
-  if (list && Array.isArray(list) && list.length) {
-    products = list
-      .filter((p) => p.type === 'standard')
-      .map((p) => ({
-        id: p.id_ref,
-        name: p.name,
-        category: p.category,
-        price: p.price,
-        emoji: p.emoji,
-        img: p.img,
-        description: p.description || '',
-         allergens: p.allergens || 'Contains milk,wheat,gluten',
-            shelfLife: p.shelfLife || 'Best consumed within 3 days',
-      }));
 
-    bdayCakes = {};
-    const bd = list.filter((p) => p.type === 'birthday');
-    bd.forEach((p) => {
-      bdayCakes[p.id_ref] = {
-        price: p.price,
-        emoji: p.emoji,
-        img: p.img,
-      };
-    });
-  } else {
-    useFallbackProducts();
-  }
-}
 
 async function loadProducts() {
   try {
@@ -362,10 +343,7 @@ async function loadProducts() {
  if (document.getElementById('cakePrice')) {
       calculateBdayPrice();
     }
-  } catch (e) {
-    console.error('Failed to load products:', e);
-    useFallbackProducts();
-  }
+
 }
 
 // --- CART STATE ---
